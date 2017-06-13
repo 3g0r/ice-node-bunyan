@@ -48,8 +48,10 @@ const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
 };
 
 function indentation(str: string, spaceCount: number = 2): string {
+  if (str.length === 0)
+    return str;
   const indent = ' '.repeat(spaceCount);
-  return str.replace(/^/mg, indent);
+  return str.replace(/^(.+)$/mg, `${indent}$1`);
 }
 
 export default class YamlStream {
