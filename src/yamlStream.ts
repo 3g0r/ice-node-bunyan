@@ -47,6 +47,11 @@ const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
   return err.stack.replace(basePath, '');
 };
 
+function indentation(str: string, spaceCount: number = 2): string {
+  const indent = ' '.repeat(spaceCount);
+  return str.replace(/^/mg, indent);
+}
+
 export default class YamlStream {
   basePath: RegExp;
 
@@ -57,13 +62,14 @@ export default class YamlStream {
   write(record: BunyanRecord) {
     const context = omit(record, excludeKeys);
     const contextString = Object.keys(context).length > 0
-      ? stringify({context}, 10)
+      ? stringify({context}, 10, 2)
       : '';
     const err = formatError(this.basePath, record.err);
     const meta = stringify(pick(record, metaDataKeys));
     const {msg, level, name} = record;
+    const logContextString = indentation(`${meta}${contextString}${err}`);
     process.stdout.write(
-      `[${levelName(level)}] ${name}: ${msg}\n${meta}${contextString}${err}`
+      `[${levelName(level)}] ${name}: ${msg}\n${logContextString}`
     );
   }
 }
