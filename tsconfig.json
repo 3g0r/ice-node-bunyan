@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES5",
+    "lib": ["es2015"],
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strictNullChecks": true,
+    "outDir": "lib",
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "ice": ["node_modules/typed-ice"]
+    }
+  },
+  "include": [
+    "src/*.ts"
+  ]
+}
