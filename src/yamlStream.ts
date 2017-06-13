@@ -63,15 +63,19 @@ export default class YamlStream {
 
   write(record: BunyanRecord) {
     const context = omit(record, excludeKeys);
-    const contextString = Object.keys(context).length > 0
+    const metaData = pick(record, metaDataKeys);
+    const contextDataString = Object.keys(context).length > 0
       ? stringify({context}, 10, 2)
       : '';
+    const metaDataString = Object.keys(metaData).length > 0
+      ? stringify(metaData, 10, 2)
+      : '';
+
     const err = formatError(this.basePath, record.err);
-    const meta = stringify(pick(record, metaDataKeys));
     const {msg, level, name} = record;
-    const logContextString = indentation(`${meta}${contextString}${err}`);
+    const info = indentation(`${metaDataString}${contextDataString}${err}`);
     process.stdout.write(
-      `[${levelName(level)}] ${name}: ${msg}\n${logContextString}`
+      `[${levelName(level)}] ${name}: ${msg}\n${info}`
     );
   }
 }
