@@ -2,7 +2,7 @@
 
 ## API
 
-### createDefaultRootLogger(config: {name: string; basePath: string; level?: number;}) :Logger)
+### createDefaultRootLogger(config: {name: string; basePath: string; level?: number;}) :Logger
 
 Helper for fast creation root logger with basic setup for work with ice.
 
