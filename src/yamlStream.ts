@@ -1,6 +1,7 @@
 import {pick, omit} from "lodash";
-import {TRACE, DEBUG, INFO, WARN, ERROR, FATAL} from "bunyan";
+import {TRACE, DEBUG, INFO, WARN, ERROR, FATAL, stdSerializers} from "bunyan";
 import {stringify} from "yamljs";
+
 
 export interface BunyanRecord {
   name: string;
@@ -44,7 +45,7 @@ const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
   if (!err)
     return '';
 
-  return err.stack.replace(basePath, '');
+  return err.stack.replace(basePath, '') + '\n';
 };
 
 function indentation(str: string, spaceCount: number = 2): string {
@@ -53,6 +54,7 @@ function indentation(str: string, spaceCount: number = 2): string {
   const indent = ' '.repeat(spaceCount);
   return str.replace(/^(.+)$/mg, `${indent}$1`);
 }
+
 
 export default class YamlStream {
   basePath: RegExp;
@@ -67,10 +69,6 @@ export default class YamlStream {
     const context = omit(record, excludeKeys);
     const metaData = pick(record, metaDataKeys);
 
-    const contextDataString = Object.keys(context).length > 0
-      ? stringify({context}, 10, 2)
-      : '';
-
     const metaDataString = Object.keys(metaData).length > 0
       ? stringify(metaData, 10, 2)
       : '';
@@ -79,9 +77,24 @@ export default class YamlStream {
       ? `${record.time} - `
       : '';
 
-    const err = formatError(this.basePath, record.err);
-    const {msg, level, name} = record;
-    const info = indentation(`${metaDataString}${contextDataString}${err}`);
+    const {name} = record;
+    let info, msg, level;
+
+    try {
+      const contextDataString = Object.keys(context).length > 0
+        ? stringify({context}, 10, 2)
+        : '';
+
+      const err = formatError(this.basePath, record.err);
+      msg = record.msg;
+      level = record.level;
+      info = indentation(`${metaDataString}${contextDataString}${err}`);
+    } catch (e) {
+      const err = stdSerializers.err(e);
+      msg = 'Yaml serialization error.';
+      level = ERROR;
+      info = indentation(`${metaDataString}${err.stack}\n`);
+    }
     process.stdout.write(
       `${dateString}[${levelName(level)}] ${name}: ${msg}\n${info}`
     );
