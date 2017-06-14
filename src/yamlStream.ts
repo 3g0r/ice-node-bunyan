@@ -56,26 +56,34 @@ function indentation(str: string, spaceCount: number = 2): string {
 
 export default class YamlStream {
   basePath: RegExp;
+  showDate: boolean;
 
-  constructor(configuration: {basePath: string}) {
+  constructor(configuration: {basePath: string; showDate?: boolean}) {
     this.basePath = new RegExp(configuration.basePath, 'g');
+    this.showDate = configuration.showDate || false;
   }
 
   write(record: BunyanRecord) {
     const context = omit(record, excludeKeys);
     const metaData = pick(record, metaDataKeys);
+
     const contextDataString = Object.keys(context).length > 0
       ? stringify({context}, 10, 2)
       : '';
+
     const metaDataString = Object.keys(metaData).length > 0
       ? stringify(metaData, 10, 2)
+      : '';
+
+    const dateString = this.showDate
+      ? `${record.time} - `
       : '';
 
     const err = formatError(this.basePath, record.err);
     const {msg, level, name} = record;
     const info = indentation(`${metaDataString}${contextDataString}${err}`);
     process.stdout.write(
-      `[${levelName(level)}] ${name}: ${msg}\n${info}`
+      `${dateString}[${levelName(level)}] ${name}: ${msg}\n${info}`
     );
   }
 }

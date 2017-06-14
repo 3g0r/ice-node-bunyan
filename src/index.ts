@@ -8,10 +8,15 @@ export {default as requestLogger} from "./requestLogger";
 export {default as YamlStream} from "./yamlStream";
 export {serializers} from "./serializers";
 
-export function createDefaultRootLogger(config: {name: string;
-                                                 basePath: string;
-                                                 level?: number; }): Logger {
-  const {name, level, basePath} = config;
+export interface LoggerConf {
+  name: string;
+  basePath: string;
+  showDate?: boolean;
+  level?: number;
+}
+
+export function createDefaultRootLogger(config: LoggerConf): Logger {
+  const {name, level, basePath, showDate} = config;
   return createLogger({
     name,
     streams: [{
@@ -19,6 +24,7 @@ export function createDefaultRootLogger(config: {name: string;
       level,
       stream: new YamlStream({
         basePath,
+        showDate,
       }),
     }],
     serializers: {
