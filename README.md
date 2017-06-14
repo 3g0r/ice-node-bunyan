@@ -20,6 +20,13 @@ const rootLogger = createDefaultRootLogger({
   basePath: __dirname,
   showDate: true,
   level: TRACE,
+  serializers: {
+    foo(fooObject) {
+      const plainJsObject = {};
+      // any operations with foo Object and plinJsObject...
+      return plainJsObject;
+    }
+  },
 });
 ```
 
