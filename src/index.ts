@@ -1,5 +1,5 @@
 import * as Logger from "bunyan";
-import {stdSerializers, createLogger, Serializer} from "bunyan";
+import {stdSerializers, createLogger, Serializers} from "bunyan";
 import {default as YamlStream} from "./yamlStream";
 import {serializers} from "./serializers";
 
@@ -10,7 +10,7 @@ export {serializers} from "./serializers";
 export interface LoggerConf {
   name: string;
   basePath: string;
-  serializers?: Serializer[];
+  serializers?: Serializers;
   showDate?: boolean;
   level?: number;
 }
@@ -30,7 +30,7 @@ export function createDefaultRootLogger(config: LoggerConf): Logger {
     serializers: {
       ...stdSerializers,
       ...serializers,
-      ...(config.serializers || []),
+      ...(config.serializers || {}),
     },
   });
 }
