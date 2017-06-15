@@ -11,7 +11,13 @@ export interface BunyanRecord {
   hostname: string;
   time: Date;
   v: string;
-  err?: { message: string; name: string; stack: string };
+  err?: {
+    message: string;
+    name: string;
+    stack: string;
+    ice_name?: string;
+    ice_cause?: string;
+  };
 }
 
 const metaDataKeys = ['module', 'iceRequestId', 'iceOperation', 'iceIdentity'];
@@ -44,8 +50,15 @@ const levelName = (level: number): string | undefined => {
 const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
   if (!err)
     return '';
+  let stack = err.stack;
 
-  return err.stack.replace(basePath, '') + '\n';
+  if (err.ice_name) {
+    const {ice_name, ice_cause} = err;
+    const header = `Error: ${ice_name}: ${ice_cause}`;
+    stack = header + '\n' + stack.replace(/.*?\n/, '');
+  }
+
+  return stack.replace(basePath, '') + '\n';
 };
 
 function indentation(str: string, spaceCount: number = 2): string {
