@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES5",
-    "lib": ["es2015"],
+    "lib": ["es2015", "es2017.object", "es2016.array.include"],
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,

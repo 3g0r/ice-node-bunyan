@@ -103,10 +103,12 @@ export default class YamlStream {
       level = record.level;
       info = indentation(`${metaDataString}${contextDataString}${err}`);
     } catch (e) {
-      const err = stdSerializers.err(e);
+      const err = stdSerializers.err(e).stack;
+      const contextDataString =
+        stringify({context: JSON.stringify(context)}, 10, 2);
       msg = 'Yaml serialization error.';
       level = ERROR;
-      info = indentation(`${metaDataString}${err.stack}\n`);
+      info = indentation(`${metaDataString}${contextDataString}${err}\n`);
     }
     process.stdout.write(
       `${dateString}[${levelName(level)}] ${name}: ${msg}\n${info}`
