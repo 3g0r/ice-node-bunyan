@@ -51,11 +51,13 @@ class Servant{
 
 Simple Bunyan stream class for yaml output format
 
-### serializers.err
+### IceLogger
 
-Wrapped default error serializer Bunyan for work with Ice.Exception.
+IceLogger inherits bunyan.Logger for reload private bunyan method "_applySerializers"
 
-Add `ice_name` key into Error object if it instance of Ice.Exception.
+for serialize Ice.Objects (Ice.Long, Ice.HashMap, Ice.Exception, Ice.Identity,
+
+Ice.ObjectPrx, Ice.Object)
 
 **Log example**
 
