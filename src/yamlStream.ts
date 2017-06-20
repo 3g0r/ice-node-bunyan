@@ -47,26 +47,39 @@ const levelName = (level: number): string | undefined => {
   }
 };
 
+function indent(str: string, spaceCount: number = 2): string {
+  if (str.length === 0)
+    return str;
+  const indent = ' '.repeat(spaceCount);
+  return str.replace(/^(.+)$/mg, `${indent}$1`);
+}
+
+
 const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
   if (!err)
     return '';
   let stack = err.stack;
 
   if (err.ice_name) {
-    const {ice_name, ice_cause} = err;
-    const header = `Error: ${ice_name}: ${ice_cause}`;
+    const {ice_name, ice_cause, message} = err;
+    const header = `Error: ${ice_name}: ${ice_cause || message || ''}`;
     stack = header + '\n' + stack.replace(/.*?\n/, '');
   }
 
-  return stack.replace(basePath, '') + '\n';
+  const stackLines = stack.split('\n');
+  const errorContext = {
+    context: omit(err, ['stack', 'message', 'ice_name', 'ice_cause']),
+  };
+  const stackTrace = stackLines.slice(1).map(
+    line => line.replace(basePath, '')
+  );
+  return [
+    stackLines[0],
+    indent(stringify(errorContext), 2),
+    indent('stacktrace:'),
+    ...stackTrace,
+  ].join('\n');
 };
-
-function indentation(str: string, spaceCount: number = 2): string {
-  if (str.length === 0)
-    return str;
-  const indent = ' '.repeat(spaceCount);
-  return str.replace(/^(.+)$/mg, `${indent}$1`);
-}
 
 
 export default class YamlStream {
@@ -101,17 +114,17 @@ export default class YamlStream {
       const err = formatError(this.basePath, record.err);
       msg = record.msg;
       level = record.level;
-      info = indentation(`${metaDataString}${contextDataString}${err}`);
+      info = indent(`${metaDataString}${contextDataString}${err}`);
     } catch (e) {
       const err = stdSerializers.err(e).stack;
       const contextDataString =
         stringify({context: JSON.stringify(context)}, 10, 2);
       msg = 'Yaml serialization error.';
       level = ERROR;
-      info = indentation(`${metaDataString}${contextDataString}${err}\n`);
+      info = indent(`${metaDataString}${contextDataString}${err}\n`);
     }
     process.stdout.write(
-      `${dateString}[${levelName(level)}] ${name}: ${msg}\n${info}`
+      `${dateString}[${levelName(level)}] ${name}: ${msg || ''}\n${info}`
     );
   }
 }
