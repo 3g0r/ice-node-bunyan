@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@types/bunyan@^0.0.36":
-  version "0.0.36"
-  resolved "https://registry.yarnpkg.com/@types/bunyan/-/bunyan-0.0.36.tgz#fdd865c58e8eaaf0ad401cd032dc861f5c57342a"
+"@types/bunyan@^1.8.10":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@types/bunyan/-/bunyan-1.8.0.tgz#913bf718a2f4dd1efa063e808cab76609289c986"
   dependencies:
     "@types/node" "*"
 
@@ -377,11 +377,7 @@ source-map@^0.5.6:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
 
-sprintf-js@^1.0.3:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.1.tgz#36be78320afe5801f6cea3ee78b6e5aab940ea0c"
-
-sprintf-js@~1.0.2:
+sprintf-js@^1.0.3, sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
 
