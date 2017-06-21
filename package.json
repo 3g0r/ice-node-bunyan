@@ -1,6 +1,6 @@
 {
   "name": "ice-node-bunyan",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "ZeroC ICE nodejs logging utilities",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -16,7 +16,8 @@
   },
   "repository": "3g0r/ice-node-bunyan",
   "keywords": [
-    "Ice", "bunyan"
+    "Ice",
+    "bunyan"
   ],
   "author": "Egor Nikolaev <eg0r.n1k0l43v@gmail.com>",
   "license": "GPL-2.0",

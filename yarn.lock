@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@types/bunyan@^1.8.10":
+"@types/bunyan@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@types/bunyan/-/bunyan-1.8.0.tgz#913bf718a2f4dd1efa063e808cab76609289c986"
   dependencies:

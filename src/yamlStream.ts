@@ -47,34 +47,53 @@ const levelName = (level: number): string | undefined => {
   }
 };
 
-const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
-  if (!err)
-    return '';
-  let stack = err.stack;
-
-  if (err.ice_name) {
-    const {ice_name, ice_cause} = err;
-    const header = `Error: ${ice_name}: ${ice_cause}`;
-    stack = header + '\n' + stack.replace(/.*?\n/, '');
-  }
-
-  return stack.replace(basePath, '') + '\n';
-};
-
-function indentation(str: string, spaceCount: number = 2): string {
+function indent(str: string, spaceCount: number = 2): string {
   if (str.length === 0)
     return str;
   const indent = ' '.repeat(spaceCount);
   return str.replace(/^(.+)$/mg, `${indent}$1`);
 }
 
+function escapeRegExp(str: string): string {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
+const formatError = (basePath: string, err?: BunyanRecord['err']): string => {
+  if (!err)
+    return '';
+  
+  const stackLines = err.stack.split('\n');
+  const {ice_name, ice_cause, message} = err;
+
+  const errorHeader = err.ice_name
+    ? `Error: ${ice_name}: ${ice_cause || message || ''}`
+    : stackLines[0];
+
+  // Remove `basePath` from stacktrace
+  const basePathRegExp = new RegExp(`(\\()(${escapeRegExp(basePath)})(.*\\))`);
+  const stackTrace = stackLines.slice(1).map(
+    line => line.replace(basePathRegExp, '$1$3')
+  );
+
+  const errorData = {
+    errorData: omit(err, ['stack', 'message', 'ice_name', 'ice_cause']),
+  };
+  
+  return [
+    errorHeader,
+    indent(stringify(errorData), 2),
+    indent('stackTrace:'),
+    ...stackTrace,
+  ].join('\n');
+};
+
 
 export default class YamlStream {
-  basePath: RegExp;
+  basePath: string;
   showDate: boolean;
 
   constructor(configuration: {basePath: string; showDate?: boolean}) {
-    this.basePath = new RegExp(configuration.basePath, 'g');
+    this.basePath = configuration.basePath;
     this.showDate = configuration.showDate || false;
   }
 
@@ -101,17 +120,17 @@ export default class YamlStream {
       const err = formatError(this.basePath, record.err);
       msg = record.msg;
       level = record.level;
-      info = indentation(`${metaDataString}${contextDataString}${err}`);
+      info = indent(`${metaDataString}${contextDataString}${err}`);
     } catch (e) {
       const err = stdSerializers.err(e).stack;
       const contextDataString =
         stringify({context: JSON.stringify(context)}, 10, 2);
       msg = 'Yaml serialization error.';
       level = ERROR;
-      info = indentation(`${metaDataString}${contextDataString}${err}\n`);
+      info = indent(`${metaDataString}${contextDataString}${err}\n`);
     }
     process.stdout.write(
-      `${dateString}[${levelName(level)}] ${name}: ${msg}\n${info}`
+      `${dateString}[${levelName(level)}] ${name}: ${msg || ''}\n${info}`
     );
   }
 }
