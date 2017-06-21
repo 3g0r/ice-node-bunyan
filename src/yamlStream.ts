@@ -54,40 +54,46 @@ function indent(str: string, spaceCount: number = 2): string {
   return str.replace(/^(.+)$/mg, `${indent}$1`);
 }
 
+function escapeRegExp(str: string): string {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
 
-const formatError = (basePath: RegExp, err?: BunyanRecord['err']): string => {
+const formatError = (basePath: string, err?: BunyanRecord['err']): string => {
   if (!err)
     return '';
-  let stack = err.stack;
+  
+  const stackLines = err.stack.split('\n');
+  const {ice_name, ice_cause, message} = err;
 
-  if (err.ice_name) {
-    const {ice_name, ice_cause, message} = err;
-    const header = `Error: ${ice_name}: ${ice_cause || message || ''}`;
-    stack = header + '\n' + stack.replace(/.*?\n/, '');
-  }
+  const errorHeader = err.ice_name
+    ? `Error: ${ice_name}: ${ice_cause || message || ''}`
+    : stackLines[0];
 
-  const stackLines = stack.split('\n');
-  const errorContext = {
-    context: omit(err, ['stack', 'message', 'ice_name', 'ice_cause']),
-  };
+  // Remove `basePath` from stacktrace
+  const basePathRegExp = new RegExp(`(\\()(${escapeRegExp(basePath)})(.*\\))`);
   const stackTrace = stackLines.slice(1).map(
-    line => line.replace(basePath, '')
+    line => line.replace(basePathRegExp, '$1$3')
   );
+
+  const errorData = {
+    errorData: omit(err, ['stack', 'message', 'ice_name', 'ice_cause']),
+  };
+  
   return [
-    stackLines[0],
-    indent(stringify(errorContext), 2),
-    indent('stacktrace:'),
+    errorHeader,
+    indent(stringify(errorData), 2),
+    indent('stackTrace:'),
     ...stackTrace,
   ].join('\n');
 };
 
 
 export default class YamlStream {
-  basePath: RegExp;
+  basePath: string;
   showDate: boolean;
 
   constructor(configuration: {basePath: string; showDate?: boolean}) {
-    this.basePath = new RegExp(configuration.basePath, 'g');
+    this.basePath = configuration.basePath;
     this.showDate = configuration.showDate || false;
   }
 
