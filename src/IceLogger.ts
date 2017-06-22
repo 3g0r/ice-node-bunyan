@@ -1,7 +1,11 @@
 import * as Logger from "bunyan";
 import {Ice} from "ice";
+import {stdSerializers} from "bunyan";
 
 function toPlainObject(anyValue: any, depth: number = 1): any {
+  if (anyValue instanceof Error)
+    return stdSerializers.err(anyValue);
+
   if (anyValue instanceof Ice.Long)
     return anyValue.toNumber();
 

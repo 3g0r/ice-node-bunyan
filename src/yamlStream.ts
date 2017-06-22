@@ -28,6 +28,8 @@ const excludeKeys = [
   'hostname', 'time', 'v', 'err',
 ];
 
+const excludeErrorKeys = ['stack', 'message', 'name', 'ice_name', 'ice_cause'];
+
 const levelName = (level: number): string | undefined => {
   switch (level) {
     case TRACE:
@@ -62,29 +64,27 @@ const formatError = (basePath: string, err?: BunyanRecord['err']): string => {
   if (!err)
     return '';
   
-  const stackLines = err.stack.split('\n');
-  const {ice_name, ice_cause, message} = err;
+  const [, ...stackLines] = (err.stack || '').split('\n');
+  const {ice_name, ice_cause, message, name} = err;
 
   const errorHeader = err.ice_name
     ? `Error: ${ice_name}: ${ice_cause || message || ''}`
-    : stackLines[0];
+    : `Error: ${name}: ${message}`;
 
   // Remove `basePath` from stacktrace
-  const basePathRegExp = new RegExp(`(\\()(${escapeRegExp(basePath)})(.*\\))`);
-  const stackTrace = stackLines.slice(1).map(
-    line => line.replace(basePathRegExp, '$1$3')
-  );
+  const basePathRegExp = new RegExp(`(\\()(${escapeRegExp(basePath)})(.*\\))`,
+                                    'gm');
 
-  const errorData = {
-    errorData: omit(err, ['stack', 'message', 'ice_name', 'ice_cause']),
-  };
+  const stackTrace = stackLines.join('\n').replace(basePathRegExp, '$1$3');
+
+  const errorData = omit(err, excludeErrorKeys);
   
   return [
-    errorHeader,
-    indent(stringify(errorData), 2),
-    indent('stackTrace:'),
-    ...stackTrace,
-  ].join('\n');
+    errorHeader, '\n',
+    indent(stringify(Object.keys(errorData).length > 0 ? {errorData} : {})),
+    indent('stackTrace:'), '\n',
+    stackTrace, '\n',
+  ].join('');
 };
 
 
