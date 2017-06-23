@@ -3,9 +3,6 @@ import {Ice} from "ice";
 import {stdSerializers} from "bunyan";
 
 function toPlainObject(anyValue: any, depth: number = 1): any {
-  if (anyValue instanceof Error)
-    return stdSerializers.err(anyValue);
-
   if (anyValue instanceof Ice.Long)
     return anyValue.toNumber();
 
@@ -23,6 +20,9 @@ function toPlainObject(anyValue: any, depth: number = 1): any {
       ice_name: anyValue.ice_name(),
     }, anyValue);
   }
+
+  if (anyValue instanceof Error)
+    return stdSerializers.err(anyValue);
 
   if (anyValue instanceof Ice.EnumBase)
     return anyValue.name;
