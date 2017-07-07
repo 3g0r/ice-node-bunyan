@@ -43,12 +43,15 @@ function toPlainObject(anyValue: any, depth: number = 1): any {
     return result;
   }
 
-  if (depth < 2 &&
-      anyValue instanceof Object && Object.keys(anyValue).length > 0) {
-    const result: any = {};
-    for (const [key, value] of Object.entries(anyValue))
-      result[key] = toPlainObject(value, depth + 1);
-    return result;
+  if (anyValue instanceof Object && Object.keys(anyValue).length > 0) {
+    if (depth < 2) {
+      const result: any = {};
+      for (const [key, value] of Object.entries(anyValue))
+        result[key] = toPlainObject(value, depth + 1);
+      return result;
+    } else {
+      return JSON.stringify(anyValue);
+    }
   }
 
   return anyValue;
