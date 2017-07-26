@@ -49,15 +49,7 @@ class Servant{
 
 ### YamlStream
 
-Simple Bunyan stream class for yaml output format
-
-### IceLogger
-
-IceLogger inherits bunyan.Logger for reload private bunyan method "_applySerializers"
-
-for serialize Ice.Objects (Ice.Long, Ice.HashMap, Ice.Exception, Ice.Identity,
-
-Ice.ObjectPrx, Ice.Object)
+Simple Bunyan stream class for yaml like output format
 
 **Log example**
 

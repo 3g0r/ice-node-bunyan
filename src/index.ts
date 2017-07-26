@@ -1,5 +1,6 @@
-import {Serializers} from "bunyan";
-import IceLogger from "./IceLogger";
+import {Stream, Serializers} from "bunyan";
+import * as Logger from "bunyan";
+
 import {default as YamlStream} from "./yamlStream";
 
 export {default as requestLogger} from "./requestLogger";
@@ -13,9 +14,9 @@ export interface LoggerConf {
   level?: number;
 }
 
-export function createDefaultRootLogger(config: LoggerConf): IceLogger {
+export function createDefaultRootLogger(config: LoggerConf): Logger {
   const {name, level, basePath, showDate, serializers} = config;
-  return new IceLogger({
+  return new Logger({
     name,
     streams: [{
       type: 'raw',
@@ -24,7 +25,7 @@ export function createDefaultRootLogger(config: LoggerConf): IceLogger {
         basePath,
         showDate,
       }),
-    }],
+    } as Stream],
     serializers: serializers || {},
   });
 }
