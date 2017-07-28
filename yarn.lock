@@ -203,9 +203,9 @@ has@^1.0.1, has@~1.0.1:
   dependencies:
     function-bind "^1.0.2"
 
-ice@^3.6.3:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/ice/-/ice-3.7.0.tgz#3f4c3c6cc35a7db8ce9071eabef06acf0367576c"
+ice@~3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/ice/-/ice-3.6.3.tgz#561eecccceb6aac30d5f1312e49e6c71c657acbb"
 
 inflight@^1.0.4:
   version "1.0.6"
@@ -469,7 +469,7 @@ tslint@^3.15.1:
     resolve "^1.1.7"
     underscore.string "^3.3.4"
 
-typed-ice@^3.6.1:
+typed-ice@~3.6.30:
   version "3.6.30"
   resolved "https://registry.yarnpkg.com/typed-ice/-/typed-ice-3.6.30.tgz#13c129195cca24942ca990a7b1d74f9bafb43a5b"
 
