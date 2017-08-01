@@ -100,6 +100,7 @@ export default class YamlStream {
 
 const isNotPrimitiveStringify = (anyValue: any) => {
   return (
+           !(anyValue instanceof Date) &&
            !(anyValue instanceof Ice.ObjectPrx) &&
            !(anyValue instanceof Ice.Identity) &&
            !(anyValue instanceof Ice.EnumBase)
@@ -114,6 +115,9 @@ function toYmlString(anyValue: any, conf: any): string {
 
   if (anyValue instanceof Ice.Long)
     return '' + anyValue.toNumber();
+
+  if (anyValue instanceof Date)
+    return anyValue.toLocaleString();
 
   if (anyValue instanceof Ice.HashMap) {
     let ymlString = '';
@@ -260,6 +264,9 @@ function formatError(basePath: string, err?: BunyanRecord['err']): string {
 function toPlainObject(anyValue: any): any {
   if (anyValue instanceof Ice.Long)
     return anyValue.toNumber();
+
+  if (anyValue instanceof Date)
+    return anyValue.toLocaleString();
 
   if (anyValue instanceof Ice.HashMap) {
     const result: any = {};
