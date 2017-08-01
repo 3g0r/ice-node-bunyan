@@ -87,3 +87,8 @@ Simple Bunyan stream class for yaml like output format
       at __init__._bytesAvailableCallback (/opt/service/node_modules/ice/src/Ice/ConnectionI.js:162:35)
       at __init__.socketBytesAvailable (/opt/service/node_modules/ice/src/Ice/TcpTransceiver.js:318:18)
 ```
+
+### Utils
+
+* `function getLevelFromName(name: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'): number;`
+* `function getNameFromLevel(level: number): 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';`

@@ -1,7 +1,7 @@
 import {pick, omit} from "lodash";
 import {Ice} from "ice";
-import {TRACE, DEBUG, INFO, WARN, ERROR, FATAL} from "bunyan";
 import {stdSerializers} from "bunyan";
+import {getNameFromLevel} from "./utils";
 
 
 export interface BunyanRecord {
@@ -30,25 +30,6 @@ const excludeKeys = [
   'hostname', 'time', 'v', 'err',
   '$$originalStack',
 ];
-
-const levelName = (level: number): string | undefined => {
-  switch (level) {
-    case TRACE:
-      return 'TRACE';
-    case DEBUG:
-      return 'DEBUG';
-    case INFO:
-      return 'INFO';
-    case WARN:
-      return 'WARN';
-    case ERROR:
-      return 'ERROR';
-    case FATAL:
-      return 'FATAL';
-    default:
-      return;
-  }
-};
 
 function indent(str: string, spaceCount: number = 2): string {
   if (str.length === 0)
@@ -91,8 +72,9 @@ export default class YamlStream {
       ? `Error: ${indent(error)}\n`
       : '';
     const info = indent(`${metaDataString}${contextString}${errorString}`);
+    const levelName = getNameFromLevel(level);
     process.stdout.write(
-      `${dateString}[${levelName(level)}] ${name}: ${msg || ''}\n${info}`
+      `${dateString}[${levelName}] ${name}: ${msg || ''}\n${info}`
         .replace(/^\s*[\r\n]/gm, '')
     );
   }
