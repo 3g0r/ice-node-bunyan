@@ -72,7 +72,7 @@ export default class YamlStream {
       ? `Error: ${indent(error)}\n`
       : '';
     const info = indent(`${metaDataString}${contextString}${errorString}`);
-    const levelName = getNameFromLevel(level);
+    const levelName = getNameFromLevel(level).toUpperCase();
     process.stdout.write(
       `${dateString}[${levelName}] ${name}: ${msg || ''}\n${info}`
         .replace(/^\s*[\r\n]/gm, '')
