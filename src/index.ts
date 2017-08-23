@@ -5,7 +5,7 @@ import {default as YamlStream} from "./yamlStream";
 
 export {default as requestLogger} from "./requestLogger";
 export {default as YamlStream} from "./yamlStream";
-export {getLevelFromName, getNameFromLevel} from "./utils";
+export {LogLevel, getLevelFromName, getNameFromLevel} from "./utils";
 
 export interface LoggerConf {
   name: string;

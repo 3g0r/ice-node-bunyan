@@ -89,6 +89,6 @@ Simple Bunyan stream class for yaml like output format
 ```
 
 ### Utils
-
-* `function getLevelFromName(name: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'): number;`
-* `function getNameFromLevel(level: number): 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';`
+* `type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';`
+* `function getLevelFromName(name: LogLevel): number;`
+* `function getNameFromLevel(level: number): LogLevel;`
