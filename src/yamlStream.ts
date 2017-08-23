@@ -145,7 +145,7 @@ function toYmlString(anyValue: any, conf: any): string {
     for (const value of anyValue) {
       let valueString = toYmlString(value, nextConf);
       if (valueString === '') {
-        continue;
+        valueString = '""';
       }
 
       if (isNotPrimitiveStringify(value)) {
@@ -192,7 +192,7 @@ function toYmlString(anyValue: any, conf: any): string {
       for (const [key, value] of Object.entries(anyValue)) {
         let valueString = toYmlString(value, nextConf);
         if (valueString === '') {
-          continue;
+          valueString = '""';
         }
 
         let divider = ': ';
