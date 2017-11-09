@@ -85,7 +85,8 @@ const isNotPrimitiveStringify = (anyValue: any) => {
            !(anyValue instanceof Date) &&
            !(anyValue instanceof Ice.ObjectPrx) &&
            !(anyValue instanceof Ice.Identity) &&
-           !(anyValue instanceof Ice.EnumBase)
+           !(anyValue instanceof Ice.EnumBase) &&
+           !(anyValue instanceof Ice.Long)
          ) && (
            Array.isArray(anyValue) ||
            anyValue instanceof Object
@@ -139,7 +140,6 @@ function toYmlString(anyValue: any, conf: any): string {
     return Ice.identityToString(anyValue);
 
   if (Array.isArray(anyValue)) {
-    // return anyValue.map(anyValue => toPlainObject(anyValue, depth));
     let ymlString = '';
     const nextConf = {basePath, depth: depth + 1};
     for (const value of anyValue) {
@@ -164,7 +164,7 @@ function toYmlString(anyValue: any, conf: any): string {
     let ymlString = `iceId: ${anyValue.ice_id()}\n`;
     const nextConf = {basePath, depth: depth + 1};
     for (const [key, value] of Object.entries(anyValue)) {
-      if (key === '__address') {
+      if (key.startsWith('__')) {
         continue;
       }
       let valueString = toYmlString(value, nextConf);
