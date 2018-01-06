@@ -14,11 +14,9 @@ export interface BunyanRecord {
   v: string;
   $$originalStack: string;
   err?: {
-    message: string;
-    name: string;
     stack: string;
-    ice_name?: string;
-    ice_cause?: string;
+    message?: string; name?: string;
+    ice_name?: string; ice_cause?: string;
   };
 }
 
@@ -105,7 +103,7 @@ function toYmlString(anyValue: any, conf: any): string {
   if (anyValue instanceof Ice.HashMap) {
     let ymlString = '';
     const nextConf = {basePath, depth: depth + 1};
-    anyValue.forEach((key: any, value: any) => {
+    anyValue.forEach((value: any, key: any) => {
       let valueString = toYmlString(value, nextConf);
       if (valueString === '') {
         return;
@@ -123,8 +121,9 @@ function toYmlString(anyValue: any, conf: any): string {
 
   if (anyValue instanceof Ice.Exception) {
     return formatError(basePath, Object.assign({
-      stack: anyValue.stack,
+      stack: (anyValue as any).stack,
       ice_name: anyValue.ice_name(),
+      ice_cause: anyValue.ice_cause,
     }, anyValue) as BunyanRecord['err']);
   }
 
@@ -157,10 +156,10 @@ function toYmlString(anyValue: any, conf: any): string {
     return ymlString;
   }
 
-  if (anyValue instanceof Ice.ObjectPrx)
+  if (anyValue instanceof Ice.ObjectPrx || anyValue instanceof Ice.Object)
     return anyValue.toString();
 
-  if (anyValue instanceof Ice.Object) {
+  if (anyValue instanceof Ice.Value) {
     let ymlString = `iceId: ${anyValue.ice_id()}\n`;
     const nextConf = {basePath, depth: depth + 1};
     for (const [key, value] of Object.entries(anyValue)) {
@@ -260,8 +259,9 @@ function toPlainObject(anyValue: any): any {
 
   if (anyValue instanceof Ice.Exception) {
     return Object.assign({
-      stack: anyValue.stack,
+      stack: (anyValue as any).stack,
       ice_name: anyValue.ice_name(),
+      ice_cause: anyValue.ice_cause(),
     }, anyValue);
   }
 
@@ -277,10 +277,10 @@ function toPlainObject(anyValue: any): any {
   if (Array.isArray(anyValue))
     return anyValue.map(anyValue => toPlainObject(anyValue));
 
-  if (anyValue instanceof Ice.ObjectPrx)
+  if (anyValue instanceof Ice.ObjectPrx || anyValue instanceof Ice.Object)
     return anyValue.toString();
 
-  if (anyValue instanceof Ice.Object) {
+  if (anyValue instanceof Ice.Value) {
     const result: any = {iceId: anyValue.ice_id()};
     for (const [key, value] of Object.entries(anyValue))
       result[key] = toPlainObject(value);
