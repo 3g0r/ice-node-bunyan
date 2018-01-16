@@ -67,9 +67,8 @@ Simple Bunyan stream class for yaml like output format
   iceRequestId: 8
   iceOperation: somethingAction
   iceIdentity: Servant/Fun
-  context:
-    remoteHost: null
-    remotePort: 28841
+  remoteHost: null
+  remotePort: 28841
   Error: Fun
       at Servant.<anonymous> (/path/servants/Servant.ts:33:13)
       at Generator.next (<anonymous>)

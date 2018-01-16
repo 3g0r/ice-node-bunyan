@@ -203,7 +203,7 @@ has@^1.0.1, has@~1.0.1:
   dependencies:
     function-bind "^1.0.2"
 
-ice@~3.7.0:
+ice@3.7.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/ice/-/ice-3.7.0.tgz#3f4c3c6cc35a7db8ce9071eabef06acf0367576c"
 

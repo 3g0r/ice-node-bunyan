@@ -59,7 +59,7 @@ export default class YamlStream {
     const {basePath} = this;
     const context = toYmlString(omit(record, excludeKeys), {basePath});
     const contextString = context
-      ? `context:\n${indent(context)}\n`
+      ? `${indent(context)}\n`
       : '';
     const metaData = toYmlString(pick(record, metaDataKeys), {basePath});
     const metaDataString = metaData
@@ -119,6 +119,25 @@ function toYmlString(anyValue: any, conf: any): string {
     return ymlString;
   }
 
+  if (anyValue instanceof Map) {
+    let ymlString = '';
+    const nextConf = {basePath, depth: depth + 1};
+    anyValue.forEach((value: any, key: any) => {
+      let valueString = toYmlString(value, nextConf);
+      if (valueString === '') {
+        return;
+      }
+
+      let divider = ': ';
+      if (isNotPrimitiveStringify(value)) {
+        divider = ':\n';
+        valueString = indent(valueString);
+      }
+      ymlString += `${toYmlString(key, nextConf)}${divider}${valueString}\n`;
+    });
+    return ymlString;
+  }
+
   if (anyValue instanceof Ice.Exception) {
     return formatError(basePath, Object.assign({
       stack: (anyValue as any).stack,
@@ -153,6 +172,24 @@ function toYmlString(anyValue: any, conf: any): string {
       }
       ymlString += `- ${valueString}\n`;
     }
+    return ymlString;
+  }
+
+  if (anyValue instanceof Set) {
+    let ymlString = '';
+    const nextConf = {basePath, depth: depth + 1};
+    anyValue.forEach((value: any) => {
+      let valueString = toYmlString(value, nextConf);
+      if (valueString === '') {
+        valueString = '""';
+      }
+
+      if (isNotPrimitiveStringify(value)) {
+        const [firstLine, ...tail] = valueString.split('\n');
+        valueString = `${firstLine}\n${indent(tail.join('\n'))}`;
+      }
+      ymlString += `- ${valueString}\n`;
+    });
     return ymlString;
   }
 
@@ -251,7 +288,15 @@ function toPlainObject(anyValue: any): any {
 
   if (anyValue instanceof Ice.HashMap) {
     const result: any = {};
-    anyValue.forEach((key: any, value: any) => {
+    anyValue.forEach((value: any, key: any) => {
+      result[toPlainObject(key)] = toPlainObject(value);
+    });
+    return result;
+  }
+
+  if (anyValue instanceof Map) {
+    const result: any = {};
+    anyValue.forEach((value: any, key: any) => {
       result[toPlainObject(key)] = toPlainObject(value);
     });
     return result;

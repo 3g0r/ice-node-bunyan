@@ -1,6 +1,6 @@
 {
   "name": "ice-node-bunyan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ZeroC ICE nodejs logging utilities",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -24,13 +24,13 @@
   "dependencies": {
     "@types/bunyan": "^1.8.0",
     "bunyan": "^1.8.10",
-    "ice": "~3.7.0",
+    "ice": "3.7.0",
     "lodash": "^4.17.4"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.55",
-    "@types/yamljs": "^0.2.30",
     "@types/tape": "^4.2.28",
+    "@types/yamljs": "^0.2.30",
     "rimraf": "^2.5.4",
     "tape": "^4.6.3",
     "ts-node": "^1.7.2",
