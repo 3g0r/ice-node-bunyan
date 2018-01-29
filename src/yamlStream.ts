@@ -59,7 +59,7 @@ export default class YamlStream {
     const {basePath} = this;
     const context = toYmlString(omit(record, excludeKeys), {basePath});
     const contextString = context
-      ? `${indent(context)}\n`
+      ? `context:\n${indent(context)}\n`
       : '';
     const metaData = toYmlString(pick(record, metaDataKeys), {basePath});
     const metaDataString = metaData
